@@ -1,0 +1,14 @@
+set show-all-if-ambiguous on
+set completion-ignore-case on
+
+# enable 8bit input
+set meta-flag on
+set input-meta on
+set convert-meta off
+set output-meta on
+$if q
+  "\C-xs": "\C-ashow "
+$endif
+$if qcon
+  "\C-xs": "\C-ashow \C-e"
+$endif
