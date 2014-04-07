@@ -57,3 +57,5 @@ map <C-l> <C-w>l
 
 " from http://forrst.com/posts/Use_w_to_sudo_write_a_file_with_Vim-uAN
 cmap w!! w !sudo tee % >/dev/null
+" Make yanking behave like kill-ring in emacs.
+nnoremap <silent> <F11> :YRShow<CR>
