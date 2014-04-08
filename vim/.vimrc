@@ -1,4 +1,4 @@
-" funny I use emacs to edit this file...
+G" funny I use emacs to edit this file...
 colorscheme zenburn
 " Path is automatically expanded to include QHOME content
 set path=.,$QHOME
@@ -59,3 +59,5 @@ map <C-l> <C-w>l
 cmap w!! w !sudo tee % >/dev/null
 " Make yanking behave like kill-ring in emacs.
 nnoremap <silent> <F11> :YRShow<CR>
+" format xml files using xmlling: http://ku1ik.com/2011/09/08/formatting-xml-in-vim-with-indent-command.html
+au FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null
