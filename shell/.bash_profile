@@ -15,3 +15,6 @@ PATH=$PATH:$HOME/.local/bin:$HOME/bin
 export PATH
 
 export CDPATH=$HOME/work
+# we want some more history save
+export HISTSIZE=10000
+export HISTCONTROL=erasedups:ignoreboth
