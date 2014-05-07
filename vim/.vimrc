@@ -60,6 +60,7 @@ cmap w!! w !sudo tee % >/dev/null
 " Make yanking behave like kill-ring in emacs.
 nnoremap <silent> <F11> :YRShow<CR>
 " history folder is now ~/.vim instead of $HOME
-let g:yankring_history_dir = '$VIM'
+let g:yankring_history_dir = "$HOME/.vim"
 " format xml files using xmlling: http://ku1ik.com/2011/09/08/formatting-xml-in-vim-with-indent-command.html
 au FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null
+au FileType q setlocal et sw=2 ts=2 sts=2 cino+=}2
