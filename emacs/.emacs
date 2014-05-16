@@ -18,9 +18,10 @@
 (show-paren-mode t)
 (setq show-paren-style 'mixed)
 (column-number-mode t)
-(subword-mode t)
+(global-subword-mode t)
 (eldoc-mode t)
 (hl-line-mode t)
+(setq fill-column 100)
 
 ;; 'yes' is too long to type
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -35,12 +36,13 @@
 (flx-ido-mode)
 (ido-everywhere t)
 (ido-vertical-mode t)
-;;; smex gets its global bind for execute-extended-command
-(global-set-key (kbd "M-x") 'smex)
 
 (setq ido-enable-flex-matching t
       ido-use-filename-at-point 'quess
       ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
+
+;;; smex gets its global bind for execute-extended-command
+(global-set-key (kbd "M-x") 'smex)
 
 ;;; python mode setup
 (autoload 'python-mode "python-mode" "Python Mode." t)
@@ -135,15 +137,31 @@ If point was already at that position, move point to beginning of line."
  ;; If there is more than one, they won't work right.
  '(kdbp-mode-continuation-whitespace-face ((t (:background "light salmon")))))
 (load-theme 'zenburn)
-;(load-theme 'solarized-light)
 
 ;;; load kdb+ mode
 (require 'kdbp-mode)
-;(require 'q-mode)
 (add-to-list 'auto-mode-alist '("\\.qsd$" . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.[qk]$" . kdbp-mode))
+(add-hook 'kdbp-mode-hook (lambda ()
+                            (setq tab-width 2)))
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(setq js2-basic-offset 2)
+
+;;; popwin 
+(require 'popwin)
+(popwin-mode 1)
+(global-set-key (kbd "C-z") popwin:keymap)
+
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
 
 ;;; misc settings
-;; handle backups
-(setq backup-directory-alist
-      '(("." . "~/.emacs.backups")))
+;; handle backups and visit places
+(require 'saveplace)
+(setq-default save-place t)
+(setq save-place-file (concat user-emacs-directory "places"))
+(setq backup-directory-alist '(("." . "~/.emacs.backups")))
+(setq-default indent-tabs-mode nil)
+
+(setq erc-nick "bartiosze"
+      erc-nickserv-passwords '((freenode (("bartiosze" . "")))))
