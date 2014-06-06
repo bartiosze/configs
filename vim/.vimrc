@@ -1,7 +1,7 @@
-" funny I use emacs to edit this file...
+""" funny I use emacs to edit this file...
 colorscheme zenburn
 " Path is automatically expanded to include QHOME content
-set path=.,$QHOME
+set path=.,$EC_SYS_PATH/bin/ec/*
 
 " Configuration below is inspired by: http://nvie.com/posts/how-i-boosted-my-vim/
 set nocompatible
@@ -10,7 +10,7 @@ set nowrap        " don't wrap lines
 set tabstop=4     " a tab is four spaces
 set shiftwidth=4  " number of spaces to use for autoindenting
 set smarttab      " insert tabs on the start of a line according to
-                  "    shiftwidth, not tabstop
+                  " shiftwidth, not tabstop
 set backspace=indent,eol,start
                   " allow backspacing over everything in insert mode
 set autoindent    " always set autoindenting on
@@ -39,9 +39,17 @@ set noerrorbells         " don't beep
 "    autocmd filetype q set expandtab
 " endif
 
+" stolen from https://github.com/carousel/urxvt/
+" Show commads completion in a menu-like display.
+set wildmenu wildmode=full
+set cursorline
+set showcmd
+set laststatus=2
+set splitright splitbelow
+" set cursorcolumn " usefull for text allign
+
 " highlight spaces and tabs in a more convenint way
-set list
-set listchars=tab:>.,trail:.,extends:#,nbsp:.
+set list listchars=tab:>.,trail:.,extends:#,nbsp:.
 
 " no arrow keys here, sorry
 map <up> <nop>

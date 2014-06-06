@@ -227,6 +227,18 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               "Revert tag history"),
     keydoc.group("Clients and screens"),
+    awful.key({ modkey,           }, "Tab",
+        function ()
+            awful.client.focus.history.previous()
+            if client.focus then
+                client.focus:raise()
+            end
+        end,
+              "Cycle over client focus history"),
+    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
+              "Swap with next client"),
+    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
+              "Swap with previous client"),
     awful.key({ modkey,           }, "j",
         function ()
             awful.client.focus.byidx( 1)
@@ -239,36 +251,22 @@ globalkeys = awful.util.table.join(
             if client.focus then client.focus:raise() end
         end,
               "Focus previous client"),
-    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
-              "Swap with next client"),
-    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
-              "Swap with previous client"),
-    awful.key({ modkey,           }, "w", 
-	      function () 
-		 mymainmenu:show({keygrabber=true}) 
-		 awful.menu.item_enter(mymainmenu, 1)
-	      end, "Open awesome menu"),
-
     awful.key({ modkey, "Control" }, "h", function () awful.screen.focus_relative( 1) end,
               "Focus next screen"),
     awful.key({ modkey, "Control" }, "l", function () awful.screen.focus_relative(-1) end,
               "Focus previous screen"),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               "Focus urgent client"),
-    awful.key({ modkey,           }, "Tab",
-        function ()
-            awful.client.focus.history.previous()
-            if client.focus then
-                client.focus:raise()
-            end
-        end,
-              "Cycle over client focus history"),
+    awful.key({ modkey, "Control" }, "n", awful.client.restore,
+              "Restore (unminimize) a client"),
     -- Layout manipulation
     keydoc.group("Layouts"),
     awful.key({ modkey, "Shift"   }, "=",     function () awful.tag.incmwfact( 0.05)    end,
               "Client size factor 5%"),
     awful.key({ modkey,           }, "-",     function () awful.tag.incmwfact(-0.05)    end,
               "Client size factor -5%"),
+    awful.key({ modkey, "Shift"   }, "\\",    function () awful.tag.setmwfact(0.5)    end,
+              "Client size factr 0.5 (equal)"),
     awful.key({ modkey, "Control"   }, "Up",
 	      function () 
 		 awful.tag.incnmaster( 1) 
@@ -310,15 +308,10 @@ globalkeys = awful.util.table.join(
     keydoc.group("Execution"),
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end,
               "Spawn a default terminal application"),
-    awful.key({ modkey, "Control" }, "r", awesome.restart,
-              "Restart awesome"),
-    awful.key({ modkey, "Shift"   }, "q", awesome.quit,
-              "Quit awesome"),
-    awful.key({ modkey, "Control" }, "n", awful.client.restore,
-              "Restore (unminimize) a client"),
-
+    awful.key({ modkey,           }, "f",      function () awful.util.spawn(browser)  end,
+	     "Spawn a default browser"),
     -- Prompt
-    awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end,
+    awful.key({ modkey },            "r", function () mypromptbox[mouse.screen]:run() end,
               "Run a command"),
     awful.key({ modkey }, "x",
               function ()
@@ -328,16 +321,26 @@ globalkeys = awful.util.table.join(
                   awful.util.getdir("cache") .. "/history_eval")
               end,
               "Run lua prompt"),
+    awful.key({ modkey, "Control" }, "r", awesome.restart,
+              "Restart awesome"),
+    awful.key({ modkey, "Shift"   }, "q", awesome.quit,
+              "Quit awesome"),
+
+
 
     keydoc.group("Misc"),
-    awful.key({ modkey, }, "F1", keydoc.display, "Display key information"),
+    awful.key({ modkey, }, "F1", keydoc.display, "Show key information"),
+    awful.key({ modkey,           }, "w", 
+	      function () 
+		 mymainmenu:show({keygrabber=true}) 
+		 awful.menu.item_enter(mymainmenu, 1)
+	      end, "Show awesome menu"),
     awful.key({ modkey }, "p", function() menubar.show() end, "Show menubar")
 )
 
 clientkeys = awful.util.table.join(
     keydoc.group("Client"),
-    awful.key({ modkey,           }, "f",      function () awful.util.spawn(browser)         end,
-	     "Open browser"),
+
     awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
 	     "Kill client"),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
@@ -437,6 +440,8 @@ awful.rules.rules = {
       properties = { tag = tags[3] } },
     { rule = { class = "emacs" },
       properties = { tag = tags[0] } },
+    { rule = { name = "EmacsClient" },
+      properties = { floating = true } },
 }
 -- }}}
 

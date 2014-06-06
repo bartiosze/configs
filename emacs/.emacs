@@ -38,7 +38,7 @@
 (ido-vertical-mode t)
 
 (setq ido-enable-flex-matching t
-      ido-use-filename-at-point 'quess
+      ido-use-filename-at-point 'guess
       ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
 
 ;;; smex gets its global bind for execute-extended-command
@@ -49,7 +49,7 @@
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (add-to-list 'interpreter-mode-alist '("python" . python-mode))
 (add-to-list 'load-path "~/.emacs.d")
-(elpy-enable)
+;(elpy-enable)
 
 ;;; magit support
 (require 'magit)
@@ -71,9 +71,9 @@
 
 ;;; utility functions and key bindings
 (defun eval-and-replace (value)
-  "Evaluate the sexp at point and replace it with its value"
+  "Evaluate the sexp at point and replace it with its return value."
   (interactive (list (eval-last-sexp nil)))
-  (kill-sexp -1)q
+  (kill-sexp -1)
   (insert (format "%S" value)))
 
 (global-set-key (kbd "\C-c e") 'eval-and-replace)
@@ -101,35 +101,33 @@ If point was already at that position, move point to beginning of line."
 
 (global-set-key (kbd "C-a") 'smart-beginning-of-line)
 
-;;; key chords
+;;; key chords + ace
 (key-chord-mode 1)
-(key-chord-define-global "xo" 'other-window)
+(key-chord-define-global "xo" 'ace-window) 
+(key-chord-define-global "jl" 'join-line)
 
-;;; start emacs server
-(server-start)
+(defun buffer-switch (arg)
+  "Run ace-jump-buffer unless called with argument"
+  (interactive "p")
+  (if (> arg 1)
+      (list-buffers)
+    (ace-jump-buffer)))
+(global-set-key (kbd "C-x C-b") 'buffer-switch)
+(global-set-key (kbd "s-a") 'ace-jump-mode)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(custom-safe-themes 
-   (quote 
-    ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4"
-     "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6"
-     "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e"
-     "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365"
-     "dd4db38519d2ad7eb9e2f30bc03fba61a7af49a185edfd44e020aa5345e3dca7"
-     default)))
- '(font-use-system-font t) 
+ '(custom-safe-themes (quote ("c2cfe2f1440d9ef4bfd3ef4cf15bfe35ff40e6d431264b1e24af64f145cffb11" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "dd4db38519d2ad7eb9e2f30bc03fba61a7af49a185edfd44e020aa5345e3dca7" default)))
+ '(fill-column 100)
+ '(font-use-system-font t)
  '(virtualenv-root "~/work/python/")
  '(whitespace-line-column 100)
- 
- '(whitespace-style
-   (quote 
-    (face tabs trailing space-before-tab newline indentation
-     empty space-after-tab space-mark tab-mark newline-mark
-     lines-tail))))
+ '(whitespace-style (quote (face tabs trailing space-before-tab indentation empty space-after-tab space-mark tab-mark lines-tail))))
+(setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -163,5 +161,7 @@ If point was already at that position, move point to beginning of line."
 (setq backup-directory-alist '(("." . "~/.emacs.backups")))
 (setq-default indent-tabs-mode nil)
 
-(setq erc-nick "bartiosze"
-      erc-nickserv-passwords '((freenode (("bartiosze" . "")))))
+(setq erc-nick "bartiosze")
+
+;;; and finally start emacs server
+(server-start)
