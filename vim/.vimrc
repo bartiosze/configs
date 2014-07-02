@@ -73,3 +73,7 @@ let g:yankring_history_dir = "$HOME/.vim"
 au FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null
 " try to format q code
 au FileType q setlocal et sw=2 ts=2 sts=2 cino+=}2
+" This one is pretty cool. I like comments but I don't like them to get in the
+" way of code. zM - close all folds (comments). zR - open all folds
+au Filetype q set foldmethod=expr |
+            \ set foldexpr=getline(v:lnum)=~'^\\s*/'
