@@ -97,7 +97,7 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "terminal", terminal },
-				    { "browser", browser },
+                                    { "browser", browser },
                                     { "awesome", myawesomemenu, beautiful.awesome_icon }
                                   }
                         })
@@ -234,11 +234,11 @@ globalkeys = awful.util.table.join(
                 client.focus:raise()
             end
         end,
-              "Cycle over client focus history"),
+              "Cycle client focus history"),
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
               "Swap with next client"),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
-              "Swap with previous client"),
+              "Swap with prev client"),
     awful.key({ modkey,           }, "j",
         function ()
             awful.client.focus.byidx( 1)
@@ -250,7 +250,7 @@ globalkeys = awful.util.table.join(
             awful.client.focus.byidx(-1)
             if client.focus then client.focus:raise() end
         end,
-              "Focus previous client"),
+              "Focus prev client"),
     awful.key({ modkey, "Control" }, "h", function () awful.screen.focus_relative( 1) end,
               "Focus next screen"),
     awful.key({ modkey, "Control" }, "l", function () awful.screen.focus_relative(-1) end,
@@ -258,7 +258,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               "Focus urgent client"),
     awful.key({ modkey, "Control" }, "n", awful.client.restore,
-              "Restore (unminimize) a client"),
+              "Restore a client"),
     -- Layout manipulation
     keydoc.group("Layouts"),
     awful.key({ modkey, "Shift"   }, "=",     function () awful.tag.incmwfact( 0.05)    end,
@@ -266,39 +266,39 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "-",     function () awful.tag.incmwfact(-0.05)    end,
               "Client size factor -5%"),
     awful.key({ modkey, "Shift"   }, "\\",    function () awful.tag.setmwfact(0.5)    end,
-              "Client size factr 0.5 (equal)"),
+              "Client size factor equal"),
     awful.key({ modkey, "Control"   }, "Up",
-	      function () 
-		 awful.tag.incnmaster( 1) 
-		 naughty.notify({ preset = { timeout = 1 },
-				  title = "Master count",
-				  text = tostring(awful.tag.getnmaster())})
-	      end,
-              "Increase number of master windows"),
+              function () 
+                 awful.tag.incnmaster( 1) 
+                 naughty.notify({ preset = { timeout = 1 },
+                                  title = "Master count",
+                                  text = tostring(awful.tag.getnmaster())})
+              end,
+              "Increase master count"),
     awful.key({ modkey, "Control"   }, "Down",     
-	      function () 
-		 awful.tag.incnmaster(-1)
-		 naughty.notify({ preset = naughty.config.presets.low,
-				  title = "Master count",
-				  text = tostring(awful.tag.getnmaster())})
-	      end,
-              "Decrease number of master windows"),
+              function () 
+                 awful.tag.incnmaster(-1)
+                 naughty.notify({ preset = naughty.config.presets.low,
+                                  title = "Master count",
+                                  text = tostring(awful.tag.getnmaster())})
+              end,
+              "Decrease master count"),
     awful.key({ modkey, "Control" }, "k",
-	      function ()
-		 awful.tag.incncol( 1)
-		 naughty.notify({ preset = { timeout = 1 },
-				  title = "Column count",
-				  text = tostring(awful.tag.getncol())})
-	      end,
-              "Increase number of column windows"),
+              function ()
+                 awful.tag.incncol( 1)
+                 naughty.notify({ preset = { timeout = 1 },
+                                  title = "Column count",
+                                  text = tostring(awful.tag.getncol())})
+              end,
+              "Increase column count"),
     awful.key({ modkey, "Control" }, "j",
-	      function ()
-		 awful.tag.incncol(-1)
-		 naughty.notify({ preset = { timeout = 1 },
-				  title = "Column count",
-				  text = tostring(awful.tag.getncol())})
-	      end,
-              "Decrease number of column windows"),
+              function ()
+                 awful.tag.incncol(-1)
+                 naughty.notify({ preset = { timeout = 1 },
+                                  title = "Column count",
+                                  text = tostring(awful.tag.getncol())})
+              end,
+              "Decrease column count"),
     awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end,
               "Next layout"),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end,
@@ -307,9 +307,9 @@ globalkeys = awful.util.table.join(
     -- Standard program
     keydoc.group("Execution"),
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end,
-              "Spawn a default terminal application"),
+              "Spawn terminal"),
     awful.key({ modkey,           }, "f",      function () awful.util.spawn(browser)  end,
-	     "Spawn a default browser"),
+             "Spawn browser"),
     -- Prompt
     awful.key({ modkey },            "r", function () mypromptbox[mouse.screen]:run() end,
               "Run a command"),
@@ -322,19 +322,19 @@ globalkeys = awful.util.table.join(
               end,
               "Run lua prompt"),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
-              "Restart awesome"),
+              "Awesome restart"),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit,
-              "Quit awesome"),
+              "Awesome quit"),
 
 
 
     keydoc.group("Misc"),
     awful.key({ modkey, }, "F1", keydoc.display, "Show key information"),
     awful.key({ modkey,           }, "w", 
-	      function () 
-		 mymainmenu:show({keygrabber=true}) 
-		 awful.menu.item_enter(mymainmenu, 1)
-	      end, "Show awesome menu"),
+              function () 
+                 mymainmenu:show({keygrabber=true}) 
+                 awful.menu.item_enter(mymainmenu, 1)
+              end, "Show awesome menu"),
     awful.key({ modkey }, "p", function() menubar.show() end, "Show menubar")
 )
 
@@ -342,30 +342,30 @@ clientkeys = awful.util.table.join(
     keydoc.group("Client"),
 
     awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
-	     "Kill client"),
+             "Kill client"),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
-	     "Go to master client"),
+             "Go to master client"),
     awful.key({ modkey,           }, "o",      awful.client.movetoscreen,
-	     "Move client to screen"),
+             "Move client to screen"),
     awful.key({ modkey, "Shift"   }, "r",      function (c) c:redraw()                       end,
-	     "Redraw screen"),
+             "Redraw screen"),
     -- awful.key({ modkey,           }, "n",
-    -- 	      function (c)
-    -- 		 -- The client currently has the input focus, so it cannot be
-    -- 		 -- minimized, since minimized clients can't have the focus.
-    -- 		 c.minimized = true
-    -- 	      end,
-    -- 	      "Client minimize"),
+    --        function (c)
+    --           -- The client currently has the input focus, so it cannot be
+    --           -- minimized, since minimized clients can't have the focus.
+    --           c.minimized = true
+    --        end,
+    --        "Client minimize"),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle,
-	     "Toggle floating client"),
+             "Toggle floating client"),
     awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
-	     "Toggle ontop"),
+             "Toggle ontop"),
     awful.key({ modkey,           }, "m",
-	      function (c)
-		 c.maximized_horizontal = not c.maximized_horizontal
-		 c.maximized_vertical   = not c.maximized_vertical
-	      end,
-	     "Toggle maximized")
+              function (c)
+                 c.maximized_horizontal = not c.maximized_horizontal
+                 c.maximized_vertical   = not c.maximized_vertical
+              end,
+             "Toggle maximized")
 )
 
 -- Compute the maximum number of digit we need, limited to 9
