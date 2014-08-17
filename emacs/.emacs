@@ -2,11 +2,13 @@
 
 ;;; package management system
 (require 'package)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(setq package-archives
+      '(("gnu" . "http://elpa.gnu.org/packages/")
+        ("marmalade" . "http://marmalade-repo.org/packages/")
+        ("melpa" . "http://melpa.milkbox.net/packages/")))
+       ;("melpa" . "http://melpa-stable.milkbox.net/packages/")))
 (package-initialize)
+
 
 ;;; uncomment this line to disable loading of "default.el" at startup
 (setq inhibit-startup-message t)
@@ -41,8 +43,13 @@
       ido-use-filename-at-point 'guess
       ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
 
+;;; use use-package for packages setup
+(require 'use-package)
+
 ;;; smex gets its global bind for execute-extended-command
-(global-set-key (kbd "M-x") 'smex)
+(use-package smex
+  :bind
+ ("M-x" . smex))
 
 ;;; python mode setup
 (autoload 'python-mode "python-mode" "Python Mode." t)
@@ -52,8 +59,10 @@
 ;(elpy-enable)
 
 ;;; magit support
-(require 'magit)
-(global-set-key (kbd "\C-x g") 'magit-status)
+(use-package magit
+  :bind ("C-x g" . magit-status)
+  :config 
+  (bind-key "q" 'magit-quit-session magit-status-mode-map))
 
 ;; full screen magit-status
 (defadvice magit-status (around magit-fullscreen activate)
@@ -67,7 +76,7 @@
   (kill-buffer)
   (jump-to-register :magit-fullscreen))
 
-(define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+;; (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
 
 ;;; utility functions and key bindings
 (defun eval-and-replace (value)
@@ -76,7 +85,8 @@
   (kill-sexp -1)
   (insert (format "%S" value)))
 
-(global-set-key (kbd "\C-c e") 'eval-and-replace)
+(bind-key "C-c e" 'eval-and-replace)
+;; (global-set-key (kbd "\C-c e") 'eval-and-replace)
 
 ;; access 'occur' from inside isearch
 (define-key isearch-mode-map (kbd "C-o")
@@ -85,7 +95,8 @@
       (occur (if isearch-regexp isearch-string (regexp-quote isearch-string))))))
 
 ;;; Jump to last change
-(global-set-key [(control .)] 'goto-last-change)
+(bind-key "C-." 'goto-last-change)
+;; (global-set-key [(control .)] 'goto-last-change)
 
 ;;; Jump between BOL and non-white char on line
 (defun smart-beginning-of-line ()
@@ -99,12 +110,16 @@ If point was already at that position, move point to beginning of line."
     (and (= oldpos (point))
          (beginning-of-line))))
 
-(global-set-key (kbd "C-a") 'smart-beginning-of-line)
+(bind-key "C-a" 'smart-beginning-of-line)
+;; (global-set-key (kbd "C-a") 'smart-beginning-of-line)
 
 ;;; key chords + ace
-(key-chord-mode 1)
-(key-chord-define-global "xo" 'ace-window) 
-(key-chord-define-global "jl" 'join-line)
+(use-package key-chord
+  :init 
+  (progn
+    (key-chord-mode 1)
+    (key-chord-define-global "xo" 'ace-window) 
+    (key-chord-define-global "jl" 'join-line)))
 
 (defun buffer-switch (arg)
   "Run ace-jump-buffer unless called with argument"
@@ -112,8 +127,11 @@ If point was already at that position, move point to beginning of line."
   (if (> arg 1)
       (list-buffers)
     (ace-jump-buffer)))
-(global-set-key (kbd "C-x C-b") 'buffer-switch)
-(global-set-key (kbd "s-a") 'ace-jump-mode)
+
+(bind-key "C-x C-b" 'buffer-switch)
+(bind-key "S-a" 'ace-jump-mode)
+;; (global-set-key (kbd "C-x C-b") 'buffer-switch)
+;; (global-set-key (kbd "s-a") 'ace-jump-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -121,12 +139,14 @@ If point was already at that position, move point to beginning of line."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(custom-safe-themes (quote ("c2cfe2f1440d9ef4bfd3ef4cf15bfe35ff40e6d431264b1e24af64f145cffb11" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "dd4db38519d2ad7eb9e2f30bc03fba61a7af49a185edfd44e020aa5345e3dca7" default)))
+ '(custom-safe-themes (quote ("146d24de1bb61ddfa64062c29b5ff57065552a7c4019bee5d869e938782dfc2a" "c2cfe2f1440d9ef4bfd3ef4cf15bfe35ff40e6d431264b1e24af64f145cffb11" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "dd4db38519d2ad7eb9e2f30bc03fba61a7af49a185edfd44e020aa5345e3dca7" default)))
  '(fill-column 100)
  '(font-use-system-font t)
+ '(org-agenda-files (quote ("~/org/bka.org")))
+ '(paradox-github-token t)
  '(virtualenv-root "~/work/python/")
  '(whitespace-line-column 100)
- '(whitespace-style (quote (face tabs trailing space-before-tab indentation empty space-after-tab space-mark tab-mark lines-tail))))
+ '(whitespace-style (quote (face tabs trailing space-before-tab indentation empty space-after-tab space-mark tab-mark lines-tail)) t))
 (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -146,12 +166,12 @@ If point was already at that position, move point to beginning of line."
 (setq js2-basic-offset 2)
 
 ;;; popwin 
-(require 'popwin)
-(popwin-mode 1)
-(global-set-key (kbd "C-z") popwin:keymap)
+(use-package popwin
+  :config (progn (popwin-mode 1)
+                 (bind-key "C-z" popwin:keymap)))
 
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
+(use-package uniquify
+  :config (setq uniquify-buffer-name-style 'forward))
 
 ;;; misc settings
 ;; handle backups and visit places
@@ -162,6 +182,9 @@ If point was already at that position, move point to beginning of line."
 (setq-default indent-tabs-mode nil)
 
 (setq erc-nick "bartiosze")
+
+;;; xcape keycode remap Return->Control (when pressed)
+(global-set-key (kbd "<key-4660>") 'ignore)
 
 ;;; and finally start emacs server
 (server-start)
