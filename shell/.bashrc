@@ -14,6 +14,7 @@ export GIT_PS1_showupstream=auto
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWCOLORHINTS=1
 export PROMPT_COMMAND='__git_ps1 "[\u@\h \W]" "\\\\$ "'
+export VISUAL=vim
 
 # Creates git repostitory with some reasonable default settings in current folder
 function git_here() {
@@ -30,5 +31,11 @@ alias gh=git_here
 alias ec="emacsclient -n -c -F '((title . \"EmacsClient\"))'"
 alias xc="xclip -selection clipboard"
 
+# docker stuff
+alias d=docker
+alias dl='d ps -ql'
+complete -F _docker d
+
 # lein completion
 source ~/.lein-completion.bash
+
