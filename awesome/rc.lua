@@ -97,10 +97,10 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "terminal", terminal },
-                                    { "browser", browser },
-                                    { "awesome", myawesomemenu, beautiful.awesome_icon }
-                                  }
-                        })
+                             { "bash", terminal .. " --loginShell -e bash" },
+                             { "browser", browser },
+                             { "awesome", myawesomemenu, beautiful.awesome_icon }}
+                       })
 
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mymainmenu })
@@ -212,8 +212,8 @@ beautiful.fg_widget_value_important="red"
 -- {{{ Mouse bindings
 root.buttons(awful.util.table.join(
     awful.button({ }, 3, function () mymainmenu:toggle() end),
-    awful.button({ }, 4, awful.tag.viewnext),
-    awful.button({ }, 5, awful.tag.viewprev)
+    awful.button({ }, 4, awful.tag.viewprev),
+    awful.button({ }, 5, awful.tag.viewnext)
 ))
 -- }}}
 
@@ -309,7 +309,9 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end,
               "Spawn terminal"),
     awful.key({ modkey,           }, "f",      function () awful.util.spawn(browser)  end,
-             "Spawn browser"),
+              "Spawn browser"),
+    awful.key({ modkey,           }, "b",      function () awful.util.spawn(terminal .. " --loginShell -e bash")  end,
+              "Spawn browser"),
     -- Prompt
     awful.key({ modkey },            "r", function () mypromptbox[mouse.screen]:run() end,
               "Run a command"),
@@ -349,23 +351,24 @@ clientkeys = awful.util.table.join(
              "Move client to screen"),
     awful.key({ modkey, "Shift"   }, "r",      function (c) c:redraw()                       end,
              "Redraw screen"),
-    -- awful.key({ modkey,           }, "n",
-    --        function (c)
-    --           -- The client currently has the input focus, so it cannot be
-    --           -- minimized, since minimized clients can't have the focus.
-    --           c.minimized = true
-    --        end,
-    --        "Client minimize"),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle,
-             "Toggle floating client"),
+             "Floating toggle"),
     awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
-             "Toggle ontop"),
+             "Ontop toggle"),
     awful.key({ modkey,           }, "m",
               function (c)
                  c.maximized_horizontal = not c.maximized_horizontal
                  c.maximized_vertical   = not c.maximized_vertical
               end,
-             "Toggle maximized")
+             "Maximized toggle"),
+    awful.key({ modkey,           }, "n",
+              function (c)
+                 -- The client currently has the input focus, so it cannot be
+                 -- minimized, since minimized clients can't have the focus.
+                 c.minimized = true
+              end,
+              "Minimize toggle")
+
 )
 
 -- Compute the maximum number of digit we need, limited to 9
@@ -519,8 +522,18 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 -- Autostart section
+
+awful.util.spawn_with_shell("xmodmap ~/.keys.xmodmap")
+
+
 local r = require("runonce")
 r.run("urxvtd -q -o -f")
 r.run("ssh-add </dev/null")
 r.run("vmware-user")
 r.run("emacs")
+r.run("xcape -e '0x1234=Return'")
+
+
+
+
+
