@@ -21,6 +21,12 @@
 ;; Enable visuals
 (use-package visual)
 
+;; setup powerline
+(use-package powerline
+  :config
+  (progn
+    (powerline-default-theme)))
+
 ;; Load elisp
 (use-package utilities)
 
@@ -30,9 +36,12 @@
   :config
   (progn
     (eval-after-load "yasnippet" '(diminish 'yas-minor-mode))
-    (eval-after-load "undo-tree" '(diminish 'undo-tree-mode))
     (eval-after-load "guide-key" '(diminish 'guide-key-mode))
     (eval-after-load "eldoc" '(diminish 'eldoc-mode))
+    (eval-after-load "paredit" '(diminish 'paredit-mode "𝕻"))
+    (eval-after-load "paredit-everywhere" '(diminish 'paredit-everywhere-mode "ℙ"))
+    (eval-after-load "helm-mode" '(diminish 'helm-mode "𝕳"))
+    (eval-after-load "auto-complete" '(diminish 'auto-complete-mode "⏦"))
     (diminish 'subword-mode)
     (diminish 'visual-line-mode)))
 
@@ -77,13 +86,14 @@
 
 (use-package magit
   :bind ("C-x g" . magit-status)
+  :diminish magit-auto-revert-mode
   :config (bind-key "q" 'b/magit-quit-session magit-status-mode-map))
 
 ;; replace elisp code with evaluation results (requires `utiliteis.el')
 (bind-key "C-c e" 'b/eval-and-replace)
 
 ;; Access 'occur' from inside isearch
-(bind-key "C-o" 'isearch-occur isearch-mode-map)
+(bind-key "C-o" 'helm-occur isearch-mode-map)
 
 ;;; Jump to last change
 (use-package goto-chg
@@ -97,19 +107,11 @@
   (progn
     (use-package key-chord
       :config (key-chord-mode 1))
-    (key-chord-define-global "so" 'ace-window)
+    (key-chord-define-global "jj" 'ace-window)
     (key-chord-define-global "jl" 'join-line)
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))))
 
 (use-package ace-jump-mode
-  :config
-  (progn
-    (defun b/buffer-switch (arg)
-      "Run ace-jump-buffer unless called with argument"
-      (interactive "p")
-      (if (> arg 1)
-          (list-buffers)
-        (ace-jump-buffer))))
   :bind (("C-x C-b" . b/buffer-switch)
          ("s-a" . ace-jump-mode)))
 
@@ -123,25 +125,41 @@
 (add-to-list 'auto-mode-alist '("\\.[qk]$" . kdbp-mode))
 (add-hook 'kdbp-mode-hook (lambda ()
                             (setq tab-width 2)))
+
+;;; web devel (html+js)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+             
 (setq js2-basic-offset 2)
 (setq sentence-end-double-space nil)
 
 ;;; popwin 
 (use-package popwin
   :config
-  (progn (popwin-mode 1)
-         (bind-key "C-z" popwin:keymap)))
+  (progn
+    (popwin-mode 1)
+    (bind-key "C-z" popwin:keymap)))
 
 (use-package uniquify
   :config
   (setq uniquify-buffer-name-style 'forward))
 
+;; fancy undo visualization. `undo-tree-visualize` is bound to `C-x u`
+(use-package undo-tree
+  :defer t
+  :ensure t
+  :diminish (undo-tree-mode . "𝖀")
+  :idle
+  (progn
+    (global-undo-tree-mode)
+    (setq undo-tree-visualizer-timestamps t)
+    (setq undo-tree-visualizer-diff t)))
+
 ;; Sometimes it is hard to remember all those key combinations.
 ;; Especially for rectangles, other windows and mode commands
 (use-package guide-key
   :init
-  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c"))
+  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c" "C-c h" "C-c p"))
   (setq guide-key/idle-delay 0.5)
   (setq guide-key/align-command-by-space-flag t)
   (guide-key-mode 1))
@@ -160,9 +178,6 @@
 
 (setq erc-nick "bartiosze")
 
-;;; xcape keycode remap Return->Control (when pressed)
-(global-set-key (kbd "<key-4660>") 'ignore)
-
 ;; whitespace style
 (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
 
@@ -176,7 +191,11 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723" "756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e" "6a37be365d1d95fad2f4d185e51928c789ef7a4ccf17e7ca13ad63a8bf5b922f" "146d24de1bb61ddfa64062c29b5ff57065552a7c4019bee5d869e938782dfc2a" default)))
+    ("3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723"
+     "756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e"
+     "6a37be365d1d95fad2f4d185e51928c789ef7a4ccf17e7ca13ad63a8bf5b922f"
+     "146d24de1bb61ddfa64062c29b5ff57065552a7c4019bee5d869e938782dfc2a"
+     default)))
  '(org-agenda-files (quote ("~/org/bka.org")))
  '(paradox-github-token t))
 (custom-set-faces
@@ -185,3 +204,37 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+
+(require 'helm)
+(require 'helm-config)
+
+;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(global-unset-key (kbd "C-x c"))
+
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+
+(when (executable-find "curl")
+  (setq helm-google-suggest-use-curl-p t))
+
+(setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+      helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+      helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+      helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+      helm-ff-file-name-history-use-recentf t)
+
+(helm-mode 1)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(setq helm-M-x-fuzzy-match t)
+(setq helm-lisp-fuzzy-completion t)
+
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(global-set-key (kbd "C-x b") 'helm-mini)
+(global-set-key (kbd "C-x C-f") 'helm-for-files)
+(global-set-key (kbd "M-s o") 'helm-occur)
+(global-set-key (kbd "C-c h g") 'helm-google-suggest)
