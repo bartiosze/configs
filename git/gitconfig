@@ -17,7 +17,6 @@
   br = branch
   undo = reset HEAD~1 --mixed
   st = status -s
-
 [color]
   ui = auto
 [color "status"]
@@ -26,6 +25,5 @@
   untracked = cyan
 [diff]
   tool = meld
-
 [help]
   autocorrect = 10
