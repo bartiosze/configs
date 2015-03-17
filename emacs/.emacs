@@ -31,16 +31,17 @@
 (use-package utilities)
 
 ;;; Packages
-;; 
+;;
 (use-package diminish
   :config
   (progn
     (eval-after-load "yasnippet" '(diminish 'yas-minor-mode))
     (eval-after-load "guide-key" '(diminish 'guide-key-mode))
     (eval-after-load "eldoc" '(diminish 'eldoc-mode))
-    (eval-after-load "paredit" '(diminish 'paredit-mode "𝕻"))
-    (eval-after-load "paredit-everywhere" '(diminish 'paredit-everywhere-mode "ℙ"))
-    (eval-after-load "helm-mode" '(diminish 'helm-mode "𝕳"))
+    (eval-after-load "paredit" '(diminish 'paredit-mode "𝝥"))
+    (eval-after-load "paredit-everywhere" '(diminish 'paredit-everywhere-mode "𝞟"))
+    (eval-after-load "helm-mode" '(diminish 'helm-mode "𝝜"))
+    (eval-after-load "flymake" '(diminish 'flymake-mode "𝝫"))
     (eval-after-load "auto-complete" '(diminish 'auto-complete-mode "⏦"))
     (diminish 'subword-mode)
     (diminish 'visual-line-mode)))
@@ -148,7 +149,7 @@
 (use-package undo-tree
   :defer t
   :ensure t
-  :diminish (undo-tree-mode . "𝖀")
+  :diminish (undo-tree-mode . "𝗨")
   :idle
   (progn
     (global-undo-tree-mode)
