@@ -17,7 +17,7 @@
 ;; Use `use-package' for packages setup
 (require 'use-package)
 
-;; Own code:
+;;; Own code:
 ;; Enable visuals
 (use-package visual)
 
@@ -129,6 +129,7 @@
 
 ;;; web devel (html+js)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-hook 'js2-mode 'hs-minor-mode)
 (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
              
 (setq js2-basic-offset 2)
@@ -206,7 +207,6 @@
  ;; If there is more than one, they won't work right.
  )
 
-
 (require 'helm)
 (require 'helm-config)
 
@@ -239,3 +239,27 @@
 (global-set-key (kbd "C-x C-f") 'helm-for-files)
 (global-set-key (kbd "M-s o") 'helm-occur)
 (global-set-key (kbd "C-c h g") 'helm-google-suggest)
+(global-set-key (kbd "C-x r b") 'helm-bookmarks)
+
+(put 'narrow-to-region 'disabled nil)
+
+(setq org-capture-templates
+      `(("l" "Ledger entries")
+        ("lm" "Expenses" plain
+         (file "~/personal/ledger")
+         "%(org-read-date) %^{Payee}
+    Assets:PKO
+    Expenses:%^{Account}  %^{Amount} PLN
+  " :immediate-finish)
+        ("ln" "No Frills" plain
+         (file "~/personal/ledger")
+         "%(let ((org-read-date-prefer-future nil)) (org-read-date)) * No Frills
+    Liabilities:MBNA  
+    Assets:Wayne:Groceries  $%^{Amount}
+  " :immediate-finish)    
+        ("lc" "Cash" plain
+         (file "~/personal/ledger")
+         "%(org-read-date) * %^{Payee}
+    Expenses:Cash 
+    Expenses:%^{Account}  %^{Amount}
+  ")))
