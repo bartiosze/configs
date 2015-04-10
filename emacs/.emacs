@@ -71,7 +71,6 @@
 (use-package smex
   :bind ("M-x" . smex))
 
-
 ;;; python mode setup
 ;; (autoload 'python-mode "python-mode" "Python Mode." t)
 ;; (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
@@ -88,7 +87,12 @@
 (use-package magit
   :bind ("C-x g" . magit-status)
   :diminish magit-auto-revert-mode
-  :config (bind-key "q" 'b/magit-quit-session magit-status-mode-map))
+  :config (bind-key "q" 'b/magit-quit-session magit-status-mode-map)
+  :init
+  (add-hook 'magit-mode-hook (lambda()
+                               (require 'magit-svn)
+                               (if (magit-svn-get-ref-info)
+                                   (magit-svn-mode)))))
 
 ;; replace elisp code with evaluation results (requires `utiliteis.el')
 (bind-key "C-c e" 'b/eval-and-replace)
@@ -114,7 +118,7 @@
 
 (use-package ace-jump-mode
   :bind (("C-x C-b" . b/buffer-switch)
-         ("s-a" . ace-jump-mode)))
+         ("s-s" . ace-jump-mode)))
 
 (use-package main-line
   :config
@@ -127,9 +131,13 @@
 (add-hook 'kdbp-mode-hook (lambda ()
                             (setq tab-width 2)))
 
+(projectile-global-mode)
+
 ;;; web devel (html+js)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-hook 'js2-mode 'hs-minor-mode)
+(add-hook 'js2-mode 'projectile-mode)
+(add-hook 'js2-mode 'yas-minor-mode)
 (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
              
 (setq js2-basic-offset 2)
@@ -191,6 +199,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(hl-line-face (quote secondary-selection))
  '(custom-safe-themes
    (quote
     ("3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723"
@@ -199,7 +208,8 @@
      "146d24de1bb61ddfa64062c29b5ff57065552a7c4019bee5d869e938782dfc2a"
      default)))
  '(org-agenda-files (quote ("~/org/bka.org")))
- '(paradox-github-token t))
+ '(paradox-github-token t)
+ '(projectile-mode-line (quote (:eval (format " 𝕡[%s]" (projectile-project-name)))))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -263,3 +273,5 @@
     Expenses:Cash 
     Expenses:%^{Account}  %^{Amount}
   ")))
+
+(setq recenter-positions '(top middle bottom))
